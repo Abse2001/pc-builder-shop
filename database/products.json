@@ -95,14 +95,14 @@
     "updated_at": "2026-01-04T19:30:58.811Z"
   },
   {
-    "id": 6,
+    "id": "6",
     "name": "HyperX Cloud II",
     "brand": "HyperX",
     "description": "Gaming headset with 7.1 surround sound",
     "price": 79.99,
     "category": "peripherals",
     "subcategory": "Headsets",
-    "image_url": "/placeholder.svg?height=200&width=200",
+    "image_url": "/api/uploads?f=1767722524032-HyperX_Cloud_II.jpeg",
     "stock": 40,
     "specs": {
       "type": "wired",
@@ -110,7 +110,8 @@
       "surround": "7.1",
       "mic": "detachable"
     },
-    "created_at": "2024-01-01T00:00:00Z"
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2026-01-06T18:02:04.535Z"
   },
   {
     "id": 7,

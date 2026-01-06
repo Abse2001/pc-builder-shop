@@ -21,6 +21,7 @@ interface Product {
 
 export default function PartsPage() {
   const [parts, setParts] = useState<Product[]>([])
+  const [filteredParts, setFilteredParts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("all")
 
@@ -31,6 +32,7 @@ export default function PartsPage() {
         const products = await response.json()
         const partsProducts = products.filter((p: Product) => p.category === "parts")
         setParts(partsProducts)
+        setFilteredParts(partsProducts)
       } catch (error) {
         console.error("Failed to fetch parts:", error)
       } finally {
@@ -41,10 +43,17 @@ export default function PartsPage() {
     fetchParts()
   }, [])
 
-  // Filter parts based on active tab
-  const filteredParts = activeTab === "all"
-    ? parts
-    : parts.filter(part => {
+  // Handle filter application
+  const handleApplyFilters = (filters: {
+    selectedBrands: string[]
+    priceRange: [number, number]
+    inStockOnly: boolean
+  }) => {
+    let filtered = parts
+
+    // Apply tab filtering first
+    if (activeTab !== "all") {
+      filtered = filtered.filter(part => {
         const subcategory = part.subcategory?.toLowerCase()
         switch (activeTab) {
           case "cpu": return subcategory?.includes("cpu")
@@ -55,6 +64,50 @@ export default function PartsPage() {
           default: return true
         }
       })
+    }
+
+    // Filter by brands
+    if (filters.selectedBrands.length > 0) {
+      filtered = filtered.filter(part => {
+        const brand = part.brand || part.name.split(' ')[0]
+        return filters.selectedBrands.includes(brand.toLowerCase())
+      })
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(part =>
+      part.price >= filters.priceRange[0] && part.price <= filters.priceRange[1]
+    )
+
+    // Filter by stock
+    if (filters.inStockOnly) {
+      filtered = filtered.filter(part => part.stock > 0)
+    }
+
+    setFilteredParts(filtered)
+  }
+
+  // Update filtered parts when tab changes
+  useEffect(() => {
+    let filtered = parts
+
+    // Apply tab filtering
+    if (activeTab !== "all") {
+      filtered = filtered.filter(part => {
+        const subcategory = part.subcategory?.toLowerCase()
+        switch (activeTab) {
+          case "cpu": return subcategory?.includes("cpu")
+          case "gpu": return subcategory?.includes("gpu")
+          case "ram": return subcategory?.includes("ram")
+          case "storage": return subcategory?.includes("storage")
+          case "motherboard": return subcategory?.includes("motherboard")
+          default: return true
+        }
+      })
+    }
+
+    setFilteredParts(filtered)
+  }, [activeTab, parts])
 
   // Calculate brands dynamically
   const brands = parts.reduce((acc: any[], product) => {
@@ -128,7 +181,7 @@ export default function PartsPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className="hidden lg:block">
-            <ProductFilters brands={brands} priceRange={priceRange} />
+            <ProductFilters brands={brands} priceRange={priceRange} onApply={handleApplyFilters} />
           </aside>
 
           {/* Products Grid */}

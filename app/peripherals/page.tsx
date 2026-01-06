@@ -30,6 +30,7 @@ const brands = [
 
 export default function PeripheralsPage() {
   const [peripherals, setPeripherals] = useState<Product[]>([])
+  const [filteredPeripherals, setFilteredPeripherals] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("all")
 
@@ -40,6 +41,7 @@ export default function PeripheralsPage() {
         const products = await response.json()
         const peripheralsProducts = products.filter((p: Product) => p.category === "peripherals")
         setPeripherals(peripheralsProducts)
+        setFilteredPeripherals(peripheralsProducts)
       } catch (error) {
         console.error("Failed to fetch peripherals:", error)
       } finally {
@@ -50,10 +52,17 @@ export default function PeripheralsPage() {
     fetchPeripherals()
   }, [])
 
-  // Filter peripherals based on active tab
-  const filteredPeripherals = activeTab === "all"
-    ? peripherals
-    : peripherals.filter(peripheral => {
+  // Handle filter application
+  const handleApplyFilters = (filters: {
+    selectedBrands: string[]
+    priceRange: [number, number]
+    inStockOnly: boolean
+  }) => {
+    let filtered = peripherals
+
+    // Apply tab filtering first
+    if (activeTab !== "all") {
+      filtered = filtered.filter(peripheral => {
         const subcategory = peripheral.subcategory?.toLowerCase()
         switch (activeTab) {
           case "mice": return subcategory?.includes("mice")
@@ -62,6 +71,48 @@ export default function PeripheralsPage() {
           default: return true
         }
       })
+    }
+
+    // Filter by brands
+    if (filters.selectedBrands.length > 0) {
+      filtered = filtered.filter(peripheral => {
+        const brand = peripheral.brand || peripheral.name.split(' ')[0]
+        return filters.selectedBrands.includes(brand.toLowerCase())
+      })
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(peripheral =>
+      peripheral.price >= filters.priceRange[0] && peripheral.price <= filters.priceRange[1]
+    )
+
+    // Filter by stock
+    if (filters.inStockOnly) {
+      filtered = filtered.filter(peripheral => peripheral.stock > 0)
+    }
+
+    setFilteredPeripherals(filtered)
+  }
+
+  // Update filtered peripherals when tab changes
+  useEffect(() => {
+    let filtered = peripherals
+
+    // Apply tab filtering
+    if (activeTab !== "all") {
+      filtered = filtered.filter(peripheral => {
+        const subcategory = peripheral.subcategory?.toLowerCase()
+        switch (activeTab) {
+          case "mice": return subcategory?.includes("mice")
+          case "keyboards": return subcategory?.includes("keyboard")
+          case "headsets": return subcategory?.includes("headset")
+          default: return true
+        }
+      })
+    }
+
+    setFilteredPeripherals(filtered)
+  }, [activeTab, peripherals])
 
   // Calculate brands dynamically
   const brands = peripherals.reduce((acc: any[], product) => {
@@ -133,7 +184,7 @@ export default function PeripheralsPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className="hidden lg:block">
-            <ProductFilters brands={brands} priceRange={priceRange} />
+            <ProductFilters brands={brands} priceRange={priceRange} onApply={handleApplyFilters} />
           </aside>
 
           {/* Products Grid */}

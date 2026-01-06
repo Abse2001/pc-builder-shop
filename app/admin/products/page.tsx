@@ -6,6 +6,7 @@ import { Plus } from "lucide-react"
 import Link from "next/link"
 import { ProductTable } from "@/components/product-table"
 import { ProductDialog } from "@/components/product-dialog"
+import { apiRequest } from "@/lib/api-client"
 
 interface Product {
   id: string | number
@@ -26,7 +27,7 @@ export default function AllProductsPage() {
   const fetchProducts = async () => {
     console.log("Admin page: fetchProducts called")
     try {
-      const response = await fetch(`/api/products?t=${Date.now()}`)
+      const response = await apiRequest(`/api/products?t=${Date.now()}`)
       const data = await response.json()
       console.log("Admin page: received", data.length, "products")
       // Sort by newest first

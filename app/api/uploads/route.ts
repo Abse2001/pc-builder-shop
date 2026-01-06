@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   console.log("Serving image:", filename, "from param:", filenameParam)
 
   try {
-    const imagePath = path.join(process.cwd(), "public", filename)
+    const imagePath = path.join(process.cwd(), "public", "uploads", filename)
     console.log("Image path:", imagePath)
 
     const imageBuffer = await fs.readFile(imagePath)

@@ -20,6 +20,7 @@ interface Product {
 
 export default function DisplaysPage() {
   const [displays, setDisplays] = useState<Product[]>([])
+  const [filteredDisplays, setFilteredDisplays] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function DisplaysPage() {
         console.log("Displays page: filtered to", displayProducts.length, "display products")
         console.log("Display products:", displayProducts.map((p: any) => ({ id: p.id, name: p.name, image_url: p.image_url, hasImage: !!p.image_url })))
         setDisplays(displayProducts)
+        setFilteredDisplays(displayProducts)
       } catch (error) {
         console.error("Failed to fetch displays:", error)
       } finally {
@@ -43,7 +45,7 @@ export default function DisplaysPage() {
     fetchDisplays()
   }, [])
 
-  // Calculate brands dynamically
+  // Calculate brands dynamically from all displays (not filtered)
   const brands = displays.reduce((acc: any[], product) => {
     // Extract brand from name if brand field is missing
     const brand = product.brand || product.name.split(' ')[0]
@@ -65,6 +67,35 @@ export default function DisplaysPage() {
   // Calculate price range
   const prices = displays.map(d => d.price)
   const priceRange: [number, number] = prices.length > 0 ? [Math.min(...prices), Math.max(...prices)] : [0, 2000]
+
+  // Handle filter application
+  const handleApplyFilters = (filters: {
+    selectedBrands: string[]
+    priceRange: [number, number]
+    inStockOnly: boolean
+  }) => {
+    let filtered = displays
+
+    // Filter by brands
+    if (filters.selectedBrands.length > 0) {
+      filtered = filtered.filter(display => {
+        const brand = display.brand || display.name.split(' ')[0]
+        return filters.selectedBrands.includes(brand.toLowerCase())
+      })
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(display =>
+      display.price >= filters.priceRange[0] && display.price <= filters.priceRange[1]
+    )
+
+    // Filter by stock
+    if (filters.inStockOnly) {
+      filtered = filtered.filter(display => display.stock > 0)
+    }
+
+    setFilteredDisplays(filtered)
+  }
 
   if (loading) {
     return (
@@ -93,7 +124,7 @@ export default function DisplaysPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-muted-foreground">{displays.length} products</p>
+          <p className="text-sm text-muted-foreground">{filteredDisplays.length} products</p>
           <Button variant="outline" size="sm" className="lg:hidden bg-transparent">
             <SlidersHorizontal className="h-4 w-4 mr-2" />
             Filters
@@ -103,13 +134,13 @@ export default function DisplaysPage() {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           <aside className="hidden lg:block">
-            <ProductFilters brands={brands} priceRange={priceRange} />
+            <ProductFilters brands={brands} priceRange={priceRange} onApply={handleApplyFilters} />
           </aside>
 
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displays.map((display) => (
+              {filteredDisplays.map((display) => (
                 <ProductCard
                   key={display.id}
                   id={String(display.id)}

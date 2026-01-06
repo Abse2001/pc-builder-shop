@@ -6,6 +6,7 @@ import { Plus } from "lucide-react"
 import Link from "next/link"
 import { ProductTable } from "@/components/product-table"
 import { ProductDialog } from "@/components/product-dialog"
+import { apiRequest } from "@/lib/api-client"
 
 interface Product {
   id: string | number
@@ -25,7 +26,7 @@ export default function PartsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`/api/products?t=${Date.now()}`)
+      const response = await apiRequest(`/api/products?t=${Date.now()}`)
       const data = await response.json()
       // Filter for parts category and sort by newest first
       const filteredProducts = data

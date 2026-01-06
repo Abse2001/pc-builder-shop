@@ -9,6 +9,7 @@ import Link from "next/link"
 import { ProductTable } from "@/components/product-table"
 import { ProductDialog } from "@/components/product-dialog"
 import { useAdminAccess } from "@/lib/hooks/use-admin-access"
+import { apiRequest } from "@/lib/api-client"
 
 interface Product {
   id: string | number
@@ -29,7 +30,7 @@ export default function PeripheralsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`/api/products?t=${Date.now()}`)
+      const response = await apiRequest(`/api/products?t=${Date.now()}`)
       const data = await response.json()
       // Filter for peripherals category and sort by newest first
       const filteredProducts = data

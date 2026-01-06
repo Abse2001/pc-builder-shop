@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
+import { apiRequest } from "@/lib/api-client"
 
 interface Product {
   id?: string
@@ -106,15 +107,14 @@ export function ProductForm({ product, category, onSuccess }: ProductFormProps) 
         // Add the file
         formDataToSend.append('image', selectedFile)
 
-        response = await fetch("/api/products", {
+        response = await apiRequest("/api/products", {
           method: product?.id ? "PUT" : "POST",
           body: formDataToSend,
         })
       } else {
         // Use JSON for requests without files
-        response = await fetch("/api/products", {
+        response = await apiRequest("/api/products", {
           method: product?.id ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(productData),
         })
       }
@@ -178,7 +178,7 @@ export function ProductForm({ product, category, onSuccess }: ProductFormProps) 
           <Label htmlFor="subcategory">Subcategory</Label>
           <Select
             value={formData.subcategory || ""}
-            onValueChange={(value) => setFormData({ ...formData, subcategory: value })}
+            onValueChange={(value: string) => setFormData({ ...formData, subcategory: value })}
           >
             <SelectTrigger id="subcategory">
               <SelectValue placeholder="Select subcategory" />

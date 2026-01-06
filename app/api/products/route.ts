@@ -8,7 +8,7 @@ import { canAccessAdmin } from '@/lib/auth/types'
 export const dynamic = 'force-dynamic'
 
 const productsFile = path.join(process.cwd(), "database", "products.json")
-const uploadsDir = path.join(process.cwd(), "public")
+const uploadsDir = path.join(process.cwd(), "public", "uploads")
 
 // Helper function to check admin access
 function checkAdminAccess(request: NextRequest) {

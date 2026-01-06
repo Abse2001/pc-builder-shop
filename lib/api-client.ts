@@ -3,8 +3,12 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('auth-token')
 
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
     ...options.headers,
+  }
+
+  // Don't set Content-Type for FormData - let the browser set it
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json'
   }
 
   if (token) {

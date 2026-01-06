@@ -7,6 +7,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAdminAccess } from "@/lib/hooks/use-admin-access"
+import { apiRequest } from "@/lib/api-client"
 
 interface CategoryStats {
   displays: number
@@ -22,7 +23,7 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("/api/products?t=" + Date.now())
+        const response = await apiRequest("/api/products?t=" + Date.now())
         const products = await response.json()
 
         const categoryCount = products.reduce((acc: CategoryStats, product: any) => {

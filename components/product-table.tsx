@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { ProductDialog } from "@/components/product-dialog"
+import { apiRequest } from "@/lib/api-client"
 
 interface Product {
   id: string | number
@@ -32,7 +33,7 @@ export function ProductTable({ products, onRefresh }: ProductTableProps) {
     setDeletingId(id)
 
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await apiRequest(`/api/products/${id}`, {
         method: "DELETE",
       })
 
