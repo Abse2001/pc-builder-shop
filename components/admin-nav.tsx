@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { LayoutDashboard, Package, Monitor, Mouse, Cpu, LogOut, Wrench, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { createClient } from "@/lib/supabase/client"
+import { apiRequest } from "@/lib/api-client"
 
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -28,8 +28,18 @@ export function AdminNav() {
   const router = useRouter()
 
   const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    try {
+      // Call logout API to clear server-side session if needed
+      await apiRequest("/api/auth", {
+        method: "POST",
+        body: JSON.stringify({ action: "logout" }),
+      })
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
+
+    // Clear localStorage token
+    localStorage.removeItem("auth-token")
     router.push("/")
     router.refresh()
   }

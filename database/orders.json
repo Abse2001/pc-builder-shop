@@ -251,5 +251,64 @@
     "status": "delivered",
     "created_at": "2026-01-06T17:28:51.011Z",
     "updated_at": "2026-01-06T17:29:03.380Z"
+  },
+  {
+    "id": "1767729611292",
+    "user_id": "1767711078261",
+    "items": [
+      {
+        "id": "7",
+        "name": "AMD Ryzen 9 7950X",
+        "brand": "AMD",
+        "price": 549.99,
+        "image": "/api/uploads?f=1767724185867-AMD_Ryzen_9_7950X.jpeg",
+        "quantity": 1
+      },
+      {
+        "id": "19",
+        "name": "RTX 4090",
+        "price": 1599,
+        "image": "/api/uploads?f=1767726471044-RTX_4090.jpeg",
+        "quantity": 1
+      },
+      {
+        "id": "23",
+        "name": "Corsair Vengeance",
+        "price": 189,
+        "image": "/api/uploads?f=1767726626737-Corsair_Vengeance.jpeg",
+        "quantity": 1
+      },
+      {
+        "id": "16",
+        "name": "MSI MPG X670E",
+        "price": 449,
+        "image": "/api/uploads?f=1767726350794-MSI_MPG_X670E.jpeg",
+        "quantity": 1
+      },
+      {
+        "id": "27",
+        "name": "Samsung 990 Pro",
+        "price": 159,
+        "image": "/api/uploads?f=1767726747516-Samsung_990_Pro.jpeg",
+        "quantity": 1
+      },
+      {
+        "id": "40",
+        "name": "Corsair H150i Elite",
+        "price": 189,
+        "image": "/api/uploads?f=1767727162637-Corsair_H150i_Elite.jpeg",
+        "quantity": 1
+      }
+    ],
+    "shipping": {
+      "fullName": "Abse",
+      "address": "N RIPLEY ST",
+      "phone": "+218921438795",
+      "city": "Montgomery"
+    },
+    "total": 3134.99,
+    "status": "processing",
+    "created_at": "2026-01-06T20:00:11.292Z",
+    "updated_at": "2026-01-06T20:00:29.911Z"
   }
 ]
